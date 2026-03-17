@@ -4,7 +4,7 @@ schemaVersion = "0.0.1"
 
 [package]
 namespace = "adamant"
-name = "adamant-SpeedrunTimer"
+name = "SpeedrunTimer"
 versionNumber = "1.0.0"
 description = "Displays RTA and load-removed timers on screen during runs."
 websiteUrl = "https://github.com/maybe-adamant/h2-pack-SpeedrunTimer"
