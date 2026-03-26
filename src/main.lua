@@ -200,7 +200,7 @@ end
 
 local function registerHooks()
     modutil.mod.Path.Wrap("StartNewRun", function(baseFunc, prevRun, args)
-        if not lib.isEnabled(config) then return baseFunc(prevRun, args) end
+        if not lib.isEnabled(config, public.definition.modpack) then return baseFunc(prevRun, args) end
         if activeTimer then
             StopAndCleanup()
         end
@@ -209,7 +209,7 @@ local function registerHooks()
     end)
 
     modutil.mod.Path.Wrap("RoomEntranceMaterialize", function(baseFunc, ...)
-        if not lib.isEnabled(config) then return baseFunc(...) end
+        if not lib.isEnabled(config, public.definition.modpack) then return baseFunc(...) end
         local val = baseFunc(...)
 
         if activeTimer and not activeTimer.Running then
@@ -220,7 +220,7 @@ local function registerHooks()
             updateThreadActive = true
             thread(function()
                 while activeTimer and activeTimer.Running do
-                    if not lib.isEnabled(config) then
+                    if not lib.isEnabled(config, public.definition.modpack) then
                         StopAndCleanup()
                         return
                     end
@@ -237,7 +237,7 @@ local function registerHooks()
     end)
 
     modutil.mod.Path.Wrap("ChronosKillPresentation", function(baseFunc, ...)
-        if not lib.isEnabled(config) then return baseFunc(...) end
+        if not lib.isEnabled(config, public.definition.modpack) then return baseFunc(...) end
         if activeTimer then
             activeTimer:stop()
         end
@@ -246,7 +246,7 @@ local function registerHooks()
 
     modutil.mod.Path.Wrap("AddTimerBlock", function(baseFunc, currRun, timerBlockName)
         local val = baseFunc(currRun, timerBlockName)
-        if lib.isEnabled(config) and timerBlockName == "MapLoad" and activeTimer and activeTimer.Running then
+        if lib.isEnabled(config, public.definition.modpack) and timerBlockName == "MapLoad" and activeTimer and activeTimer.Running then
             activeTimer.LrtTimer:processLoadEvent(true)
         end
         return val
@@ -254,7 +254,7 @@ local function registerHooks()
 
     modutil.mod.Path.Wrap("RemoveTimerBlock", function(baseFunc, currRun, timerBlockName)
         local val = baseFunc(currRun, timerBlockName)
-        if lib.isEnabled(config) and timerBlockName == "MapLoad" and activeTimer and activeTimer.Running then
+        if lib.isEnabled(config, public.definition.modpack) and timerBlockName == "MapLoad" and activeTimer and activeTimer.Running then
             activeTimer.LrtTimer:processLoadEvent(false)
         end
         return val
@@ -293,7 +293,7 @@ modutil.once_loaded.game(function()
     loader.load(function()
         import_as_fallback(rom.game)
         registerHooks()
-        if lib.isEnabled(config) then apply() end
+        if lib.isEnabled(config, public.definition.modpack) then apply() end
     end)
 end)
 
