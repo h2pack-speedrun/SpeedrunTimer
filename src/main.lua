@@ -8,7 +8,7 @@ game = rom.game
 modutil = mods['SGG_Modding-ModUtil']
 chalk = mods['SGG_Modding-Chalk']
 reload = mods['SGG_Modding-ReLoad']
-local lib = mods['adamant-Modpack_Lib']
+local lib = mods['adamant-ModpackLib']
 
 config = chalk.auto('config.lua')
 public.config = config
