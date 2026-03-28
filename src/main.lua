@@ -27,7 +27,7 @@ public.definition = {
     tooltip      = "Displays RTA and load-removed timers on screen during runs.",
     default      = false,
     dataMutation = false,
-    modpack      = "h2-modpack",
+    modpack      = "speedrun",
 }
 
 -- =============================================================================
