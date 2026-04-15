@@ -23,7 +23,7 @@ public.definition = {
     modpack      = "speedrun",
 }
 
-public.store = lib.createStore(config, public.definition, dataDefaults)
+public.store = lib.store.create(config, public.definition, dataDefaults)
 store = public.store
 
 -- =============================================================================
@@ -59,5 +59,5 @@ modutil.once_loaded.game(function()
     loader.load(init, init)
 end)
 
-local uiCallback = lib.standaloneUI(public.definition, store)
+local uiCallback = lib.coordinator.standaloneUI(public.definition, store)
 rom.gui.add_to_menu_bar(uiCallback)
