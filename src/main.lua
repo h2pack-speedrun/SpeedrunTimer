@@ -8,56 +8,68 @@ local reload = mods['SGG_Modding-ReLoad']
 local dataDefaults = import("config.lua")
 local config = chalk.auto('config.lua')
 
--- =============================================================================
--- MODULE DEFINITION
--- =============================================================================
-
-public.definition = {
-    id           = "SpeedrunTimer",
-    name         = "Speedrun Timer",
-    category     = "QoL",
-    subgroup     = "QoL",
-    tooltip      = "Displays RTA and load-removed timers on screen during runs.",
-    default      = dataDefaults.Enabled,
-    affectsRunData = false,
-    modpack      = "speedrun",
-}
-
-public.store = lib.store.create(config, public.definition, dataDefaults)
-store = public.store
-
--- =============================================================================
--- TIMER IMPORTS
--- =============================================================================
-
-import 'timer/RtaTimer.lua'
-import 'timer/LrtTimer.lua'
-import 'timer/IgtTimer.lua'
-import 'timer/Runtime.lua'
+SpeedrunTimerInternal = SpeedrunTimerInternal or {}
 local internal = SpeedrunTimerInternal
 
--- =============================================================================
--- PUBLIC API
--- =============================================================================
+public.definition = {
+    id             = "SpeedrunTimer",
+    name           = "Speedrun Timer",
+    tooltip        = "Displays RTA and load-removed timers on screen during runs.",
+    default        = dataDefaults.Enabled,
+    affectsRunData = false,
+    modpack        = "speedrun",
+}
 
-public.getRealTime = internal.GetRealTime
-public.getLoadRemovedTime = internal.GetLoadRemovedTime
-public.getInGameTime = internal.GetInGameTime
+public.store = nil
+store = nil
+internal.standaloneUi = nil
 
--- =============================================================================
--- Wiring
--- =============================================================================
+local function registerHooks()
+    if internal.RegisterHooks then
+        internal.RegisterHooks()
+    end
+    if internal.RegisterPublicApi then
+        internal.RegisterPublicApi()
+    end
+    public.DrawTab = internal.DrawTab
+    -- public.DrawQuickContent = internal.DrawQuickContent
+end
 
 local loader = reload.auto_single()
 
 local function init()
     import_as_fallback(rom.game)
-    internal.RegisterHooks()
+    import("data.lua")
+    import("ui.lua")
+    public.store = lib.store.create(config, public.definition, dataDefaults)
+    store = public.store
+    registerHooks()
+    internal.standaloneUi = lib.host.standaloneUI(
+        public.definition,
+        store,
+        store.uiState,
+        {
+            getDrawTab = function()
+                return public.DrawTab
+            end,
+        }
+    )
 end
 
 modutil.once_loaded.game(function()
     loader.load(init, init)
 end)
 
-local uiCallback = lib.coordinator.standaloneUI(public.definition, store)
-rom.gui.add_to_menu_bar(uiCallback)
+---@diagnostic disable-next-line: redundant-parameter
+rom.gui.add_imgui(function()
+    if internal.standaloneUi and internal.standaloneUi.renderWindow then
+        internal.standaloneUi.renderWindow()
+    end
+end)
+
+---@diagnostic disable-next-line: redundant-parameter
+rom.gui.add_to_menu_bar(function()
+    if internal.standaloneUi and internal.standaloneUi.addMenuBar then
+        internal.standaloneUi.addMenuBar()
+    end
+end)
