@@ -1,4 +1,4 @@
-name: Lua Linter (Luacheck)
+name: Lua Validation
 
 on:
   push:
@@ -26,3 +26,7 @@ jobs:
 
       - name: Run Luacheck
         run: luacheck src/
+
+      - name: Parse Lua sources
+        run: |
+          find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac -p

@@ -45,9 +45,6 @@ local function init()
     store, session = lib.createStore(config, public.definition, dataDefaults)
     internal.store = store
 
-    if internal.RegisterHooks then
-        internal.RegisterHooks()
-    end
     if internal.RegisterPublicApi then
         internal.RegisterPublicApi()
     end
@@ -56,6 +53,8 @@ local function init()
         definition = public.definition,
         store = store,
         session = session,
+        hookOwner = internal,
+        registerHooks = internal.RegisterHooks,
         drawTab = internal.DrawTab,
         -- drawQuickContent = internal.DrawQuickContent,
     })
@@ -63,7 +62,7 @@ local function init()
 end
 
 modutil.once_loaded.game(function()
-    loader.load(init, init)
+    loader.load(nil, init)
 end)
 
 ---@diagnostic disable-next-line: redundant-parameter

@@ -145,7 +145,7 @@ local function StopAndCleanup()
 end
 
 function internal.RegisterHooks()
-    modutil.mod.Path.Wrap("StartNewRun", function(baseFunc, prevRun, args)
+    lib.hooks.Wrap(internal, "StartNewRun", function(baseFunc, prevRun, args)
         if not lib.isModuleEnabled(internal.store, public.definition.modpack) then return baseFunc(prevRun, args) end
         if activeTimer then
             StopAndCleanup()
@@ -154,7 +154,7 @@ function internal.RegisterHooks()
         return baseFunc(prevRun, args)
     end)
 
-    modutil.mod.Path.Wrap("RoomEntranceMaterialize", function(baseFunc, ...)
+    lib.hooks.Wrap(internal, "RoomEntranceMaterialize", function(baseFunc, ...)
         if not lib.isModuleEnabled(internal.store, public.definition.modpack) then return baseFunc(...) end
         local val = baseFunc(...)
 
@@ -182,7 +182,7 @@ function internal.RegisterHooks()
         return val
     end)
 
-    modutil.mod.Path.Wrap("ChronosKillPresentation", function(baseFunc, ...)
+    lib.hooks.Wrap(internal, "ChronosKillPresentation", function(baseFunc, ...)
         if not lib.isModuleEnabled(internal.store, public.definition.modpack) then return baseFunc(...) end
         if activeTimer then
             activeTimer:stop()
@@ -190,7 +190,7 @@ function internal.RegisterHooks()
         return baseFunc(...)
     end)
 
-    modutil.mod.Path.Wrap("AddTimerBlock", function(baseFunc, currRun, timerBlockName)
+    lib.hooks.Wrap(internal, "AddTimerBlock", function(baseFunc, currRun, timerBlockName)
         local val = baseFunc(currRun, timerBlockName)
         if lib.isModuleEnabled(internal.store, public.definition.modpack) and timerBlockName == "MapLoad"
                 and activeTimer and activeTimer.Running then
@@ -200,7 +200,7 @@ function internal.RegisterHooks()
         return val
     end)
 
-    modutil.mod.Path.Wrap("RemoveTimerBlock", function(baseFunc, currRun, timerBlockName)
+    lib.hooks.Wrap(internal, "RemoveTimerBlock", function(baseFunc, currRun, timerBlockName)
         local val = baseFunc(currRun, timerBlockName)
         if lib.isModuleEnabled(internal.store, public.definition.modpack) and timerBlockName == "MapLoad"
                 and activeTimer and activeTimer.Running then
