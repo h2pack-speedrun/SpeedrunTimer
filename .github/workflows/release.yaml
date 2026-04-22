@@ -53,6 +53,14 @@ jobs:
           luacheck src/
           find src -type f -name '*.lua' -print0 | xargs -0 -r -n1 luac -p
 
+      - name: Install LuaUnit
+        if: ${{ hashFiles('tests/all.lua') != '' }}
+        run: luarocks install luaunit
+
+      - name: Run tests
+        if: ${{ hashFiles('tests/all.lua') != '' }}
+        run: lua tests/all.lua
+
       - name: Rotate unreleased section in changelog
         uses: thomaseizinger/keep-a-changelog-new-release@77ac767b2f7f6edf2ee72ab3364ed26667086f96
         with:
