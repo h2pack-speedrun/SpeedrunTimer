@@ -16,6 +16,7 @@ local config = chalk.auto('config.lua')
 
 local PACK_ID = "speedrun"
 local MODULE_ID = "SpeedrunTimer"
+local PLUGIN_GUID = _PLUGIN.guid
 
 ---@class SpeedrunTimerInternal
 ---@field store ManagedStore|nil
@@ -76,6 +77,7 @@ local function init()
     end
 
     lib.createModuleHost({
+        pluginGuid = PLUGIN_GUID,
         definition = definition,
         store = store,
         session = session,
@@ -84,7 +86,7 @@ local function init()
         drawTab = internal.DrawTab,
         drawQuickContent = internal.DrawQuickContent,
     })
-    internal.standaloneUi = lib.standaloneHost()
+    internal.standaloneUi = lib.standaloneHost(PLUGIN_GUID)
 end
 
 modutil.once_loaded.game(function()
